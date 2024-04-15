@@ -22,14 +22,13 @@ module FP_Multiplier(
 // ======================================================================
     Adder_Subtractor8 Sub(
         , Exp_temp,     
-        B[30:23],   8'd127,     `SubMode
+        B[30:23],   8'd125,     `SubMode
     );
 
     Adder_Subtractor8 Add(
         , Exp_sum,     
         A[30:23],   Exp_temp,   `AddMode
     );
-
 
 // ======================================================================
 // Mantissa : mts_A * mts_B

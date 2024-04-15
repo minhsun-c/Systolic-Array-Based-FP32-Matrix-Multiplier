@@ -11,6 +11,7 @@ module LZDetector48(
     wire [7:0]  r08;
     wire [15:0] r16;
     wire [31:0] r32;
+    wire [5:0]  s_temp;
 
     assign result32     = ~(|q[47:16]);
     assign result16_0   = ~(|q[47:32]);
@@ -39,19 +40,21 @@ module LZDetector48(
         ~q[43], ~q[45], ~q[47]
     };
 
-    assign m_result04 = r04[s[5:4]];
-    assign m_result08 = r08[s[5:3]];
-    assign m_result16 = r16[s[5:2]];
-    assign m_result32 = r32[s[5:1]];
+    assign m_result04 = r04[s_temp[5:4]];
+    assign m_result08 = r08[s_temp[5:3]];
+    assign m_result16 = r16[s_temp[5:2]];
+    assign m_result32 = r32[s_temp[5:1]];
 
-    assign s = {
+    assign s_temp = {
         result32,
-        (s[5]) ? result16_1 : result16_0,
+        (s_temp[5]) ? result16_1 : result16_0,
         m_result04,
         m_result08,
         m_result16,
         m_result32
     };
+
+    assign s = s_temp + 6'b1;
 
 endmodule
 

@@ -81,14 +81,16 @@ module FP_Adder_Subtractor32 #(
     wire    [5 : 0]                         Shift_amount;
     wire    [5 : 0]                         Shift_real;
     wire    [MTS_IEEE754 + 1 : 0]           mts_shift;
+    
     LZDetector48 LZD(
         Shift_amount, {23'b0, mts_added} 
     );
+    
     assign Shift_real   = Shift_amount - 5'd23;
     assign mts_shift    = mts_added << Shift_real;
     assign mts_o        = mts_shift[23:1];
-    assign isZero       = ~(|mts_shift);
-    assign exp_o        = exp_added - Shift_real + 1;
+    assign isZero       = ~(|mts_added);
+    assign exp_o        = exp_added - Shift_real + 2;
 
 // ********************************************************************************************
 // Sign

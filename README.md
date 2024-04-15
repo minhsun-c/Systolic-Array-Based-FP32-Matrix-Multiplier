@@ -3,8 +3,6 @@
 ## Source Code
 - `FPAdderSubtractor.v`
 - `FPLZDetector.v`
-  - LZDetector08
-  - LZDetector32
   - LZDetector48
 - `FPMultiplier.v`
   - FP_Multiplier 
@@ -15,6 +13,7 @@
 - `IntMultiplier.v`
   - Int_Multiplier
   - CarrySaveAdder48
+- `ProcessingElement.v`
 
 
 ## Compile and Execute

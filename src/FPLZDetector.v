@@ -1,48 +1,6 @@
 `ifndef __LEADING_ZERO_DETECTOR
 `define __LEADING_ZERO_DETECTOR
 
-module LZDetector08(
-    output reg  [2:0]   s,
-    input       [7:0]   q 
-); 
-    always@(*)begin
-        s[2] = ~(|q[7:4]);
-        s[1] = (s[2]) ? ~(|q[3:2]) : ~(|q[7:6]);
-        case({s[2], s[1]})
-            2'b00 : s[0] = ~q[7];
-            2'b01 : s[0] = ~q[5];
-            2'b10 : s[0] = ~q[3];
-            2'b11 : s[0] = ~q[1];
-        endcase
-    end
-endmodule
-
-module LZDetector32(
-    output reg  [4:0]   s,
-    input       [31:0]  q 
-);
-    wire result16, result8_0, result8_1, result4_0, result4_1, result4_2, result4_3;
-    wire m_result04, m_result08, m_result16;
-    wire [3:0] r4;
-
-    assign result16  = ~(|q[31:16]);
-    assign result8_0 = ~(|q[31:24]);
-    assign result8_1 = ~(|q[15:8]);
-    assign result4_0 = ~(|q[31:28]);
-    assign result4_1 = ~(|q[23:20]);
-    assign result4_2 = ~(|q[15:12]);
-    assign result4_3 = ~(|q[7:4]);
-    assign r4        = {result4_3, result4_2, result4_1, result4_0};
-
-    always@(*) begin
-        s[4] = result16;
-        s[3] = (s[4])? result8_1:result8_0;
-        s[2] = m_result04;
-        s[1] = m_result08;
-        s[0] = m_result16;
-    end
-endmodule
-
 module LZDetector48(
     output      [5:0]   s,
     input       [47:0]  q 

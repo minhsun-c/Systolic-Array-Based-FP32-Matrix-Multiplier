@@ -6,9 +6,6 @@ module FP_Multiplier(
     input   [31:0]  B,
     output  [31:0]  Out
 );
-    `define AddMode 1'b0
-    `define SubMode 1'b1
-
     wire    [7:0]   Exp_temp;
     wire    [7:0]   Exp_sum;
     wire    [47:0]  Mts_temp;
@@ -47,12 +44,12 @@ module FP_Multiplier(
     LZDetector48 LZD(
         Shift_amount, Mts_temp
     );
-
+    
     Adder_Subtractor8 NORM(
         , Out[30:23],   
         Exp_sum,   {2'b0, Shift_amount},   `SubMode
     );
-
+    
     assign Mts_shifted = Mts_temp << Shift_amount;
     assign Out[22 : 0] = Mts_shifted[46 : 24];
 endmodule

@@ -1,0 +1,48 @@
+$date
+	Mon Apr 15 23:42:48 2024
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module tb $end
+$var wire 6 ! Out [5:0] $end
+$var reg 48 " A [47:0] $end
+$scope module LZD $end
+$var wire 48 # q [47:0] $end
+$var wire 1 $ result16_0 $end
+$var wire 1 % result16_1 $end
+$var wire 1 & result32 $end
+$var wire 6 ' s [5:0] $end
+$var wire 32 ( r32 [31:0] $end
+$var wire 16 ) r16 [15:0] $end
+$var wire 8 * r08 [7:0] $end
+$var wire 4 + r04 [3:0] $end
+$var wire 1 , m_result32 $end
+$var wire 1 - m_result16 $end
+$var wire 1 . m_result08 $end
+$var wire 1 / m_result04 $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+#0
+$dumpvars
+0/
+0.
+1-
+1,
+b110 +
+b111110 *
+b111111111111 )
+b111111111111111111111111 (
+b11 '
+0&
+1%
+0$
+b100000000000000000000000000000000000000000000 #
+b100000000000000000000000000000000000000000000 "
+b11 !
+$end
+#2

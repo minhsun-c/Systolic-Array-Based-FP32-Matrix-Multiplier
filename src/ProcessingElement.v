@@ -14,8 +14,8 @@ module P_Element(
 // ================================================================================
     reg     [31:0]  REG_TOP;
     reg     [31:0]  REG_LEFT;
-    reg     [31:0]  REG_PIPE;
-    reg     [31:0]  REG_TEMP;
+    reg     [31:0]  REG_MUL;
+    reg     [31:0]  REG_ADD;
     wire    [31:0]  RESULT_MUL;
     wire    [31:0]  RESULT_ADD;
     wire            RESULT_isZero;
@@ -26,8 +26,8 @@ module P_Element(
     always @(negedge RST_N) begin
         REG_TOP     <= 32'b0;
         REG_LEFT    <= 32'b0;
-        REG_PIPE    <= 32'b0;
-        REG_TEMP    <= 32'b0;
+        REG_MUL     <= 32'b0;
+        REG_ADD     <= 32'b0;
         OUT         <= 32'b0;
     end
 
@@ -40,41 +40,41 @@ module P_Element(
     end
 
 // ================================================================================
-// STAGE 2: REG_TOP * REG_LEFT, result stores in pipeline register (REG_PIPE)
+// STAGE 2: REG_TOP * REG_LEFT, result stores in pipeline register (REG_MUL)
 // ================================================================================
     FP_Multiplier MUL(
         REG_TOP, REG_LEFT, RESULT_MUL
     );
     always @(posedge CLK) begin
         if (~(|REG_TOP) | ~(|REG_LEFT))
-            REG_PIPE    <= `FPZero;
+            REG_MUL     <= `FPZero;
         else
-            REG_PIPE    <= RESULT_MUL;
+            REG_MUL     <= RESULT_MUL;
     end
 
 // ================================================================================
-// STAGE 3: OUT + REG_PIPE, result stores in temparary register (REG_TEMP)
+// STAGE 3: OUT + REG_MUL , result stores in pipeline register (REG_ADD)
 // ================================================================================
     FP_Adder_Subtractor32 ADD(
         .Out(RESULT_ADD),       .isZero(RESULT_isZero),
-        .A(OUT),                .B(REG_PIPE)
+        .A(OUT),                .B(REG_MUL )
     );
     always @(posedge CLK) begin
-        if ((~(|OUT) & ~(|REG_PIPE)) | RESULT_isZero)
-            REG_TEMP    <= `FPZero;
+        if ((~(|OUT) & ~(|REG_MUL )) | RESULT_isZero)
+            REG_ADD     <= `FPZero;
         else if (~|OUT) 
-            REG_TEMP    <= REG_PIPE;
-        else if (~|REG_PIPE) 
-            REG_TEMP    <= OUT;
+            REG_ADD     <= REG_MUL ;
+        else if (~|REG_MUL ) 
+            REG_ADD     <= OUT;
         else 
-            REG_TEMP    <= RESULT_ADD;
+            REG_ADD     <= RESULT_ADD;
     end
 
 // ================================================================================
-// STAGE 4: REG_TEMP -> OUT
+// STAGE 4: REG_ADD  -> OUT
 // ================================================================================
     always @(posedge CLK) begin
-        OUT         <= REG_TEMP;
+        OUT         <= REG_ADD ;
     end
 
 endmodule

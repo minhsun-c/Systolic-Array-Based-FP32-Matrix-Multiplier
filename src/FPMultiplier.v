@@ -50,7 +50,7 @@ module FP_Multiplier(
     );
     
     assign Mts_shifted = Mts_temp << Shift_amount;
-    assign Out[22 : 0] = Mts_shifted[46 : 24];
+    assign Out[22 : 0] = Mts_shifted[47 : 25];
 endmodule
 
 `endif

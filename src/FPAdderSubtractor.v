@@ -88,7 +88,7 @@ module FP_Adder_Subtractor32 #(
     
     assign Shift_real   = Shift_amount - 5'd23;
     assign mts_shift    = mts_added << Shift_real;
-    assign mts_o        = mts_shift[23:1];
+    assign mts_o        = mts_shift[24:2];
     assign isZero       = ~(|mts_added);
     assign exp_o        = exp_added - Shift_real + 2;
 

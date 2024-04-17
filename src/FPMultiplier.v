@@ -51,6 +51,13 @@ module FP_Multiplier(
     
     assign Mts_shifted = Mts_temp << Shift_amount;
     assign Out[22 : 0] = Mts_shifted[47 : 25];
+
+    wire        [7:0]   exp_o;
+    wire        [22:0]  mts_o;
+    wire                sign_o;
+    assign exp_o = Out[31:23];
+    assign mts_o = Out[22:0] ;
+    assign sign_o = Out[31];
 endmodule
 
 `endif

@@ -20,8 +20,7 @@ module P_Element(
     reg     [31:0]  REG_LEFT;       // To store input from left of PE
     reg     [31:0]  REG_MUL;        // To store the product of REG_TOP, REG_LEFT
     reg     [31:0]  REG_ADD;        // To store the sum of product, OUT
-    reg     [31:0]  REG_STALL;      // To store REG_MUL for one more cycle
-    wire    [31:0]  PRE_ADD;        // Give the correct operand for Adder, depend by CUR_STATE
+    reg     [31:0]  PRE_ADD;        // Give the correct operand for Adder, depend by CUR_STATE
     wire    [31:0]  RESULT_MUL;     
     wire    [31:0]  RESULT_ADD;
     wire            RESULT_isZero;
@@ -34,17 +33,25 @@ module P_Element(
         REG_LEFT    <= 32'b0;
         REG_MUL     <= 32'b0;
         REG_ADD     <= 32'b0;
-        REG_STALL   <= 32'b0;
+        PRE_ADD     <= 32'b0;
         OUT         <= 32'b0;
         CUR_STATE   <= 3'b0;
         OUT_CHECK   <= 1'b0;
     end
 
     always @(posedge CLK) begin
-        if (CUR_STATE <= 3'd3)
+        if (CUR_STATE < 3'd2)begin 
             CUR_STATE <= CUR_STATE + 1; 
-        else
+            OUT_CHECK <= OUT_CHECK; 
+        end
+        else if (CUR_STATE == 3'd2) begin
+            CUR_STATE <= CUR_STATE + 1;
+            OUT_CHECK <= 1'b1; 
+        end
+        else begin
             CUR_STATE <= CUR_STATE;
+            OUT_CHECK <= ~OUT_CHECK;
+        end
     end
 
 
@@ -72,43 +79,43 @@ module P_Element(
     end
 
 // ==============================================================================================
-// STAGE 3: STALL
+// STAGE 3: OUT + REG_MUL , result stores in pipeline register (REG_ADD)
+//      BUT data hazard occurs between stage 3, 4.
+//      Therefore, adding a forwarding path instead passing `OUT` directly
+// Forwarding Path:
+//      Store the previous sum in register (PRE_ADD), then add it with REG_MUL  
 // ==============================================================================================
-    always @(posedge CLK) begin
-        REG_STALL       <= REG_MUL; 
-    end
-// ==============================================================================================
-// STAGE 4: OUT + REG_MUL , result stores in pipeline register (REG_ADD)
-// ==============================================================================================
-    assign PRE_ADD = (CUR_STATE > 3'd3) ? REG_STALL : REG_MUL;
-    
     FP_Adder_Subtractor32 ADD(
         .Out(RESULT_ADD),       .isZero(RESULT_isZero),
-        .A(OUT),                .B(PRE_ADD)
+        .A(REG_MUL),                .B(PRE_ADD)
     );
     always @(posedge CLK) begin
         // (OUT == 0 && REG_MUL == 0) or (A + B == 0)
-        if ((~(|OUT) & ~(|REG_MUL )) | RESULT_isZero)
+        if ((~(|PRE_ADD) & ~(|REG_MUL )) | RESULT_isZero) begin
             REG_ADD     <= `FPZero;
+            PRE_ADD     <= `FPZero;
+        end
         // OUT == 0
-        else if (~|OUT) 
+        else if (~|PRE_ADD) begin
             REG_ADD     <= REG_MUL ;
+            PRE_ADD     <= REG_MUL ;
+        end
         // REG_MUL == 0
-        else if (~|REG_MUL ) 
-            REG_ADD     <= OUT;
-        else 
+        else if (~|REG_MUL ) begin
+            REG_ADD     <= PRE_ADD;
+            PRE_ADD     <= PRE_ADD;
+        end
+        else begin
             REG_ADD     <= RESULT_ADD;
+            PRE_ADD     <= RESULT_ADD;
+        end
     end
 
 // ==============================================================================================
-// STAGE 5: REG_ADD  -> OUT
+// STAGE 4: REG_ADD  -> OUT
 // ==============================================================================================
     always @(posedge CLK) begin
-        if (OUT_CHECK)
-            OUT         <= REG_ADD ;
-        else
-            OUT         <= OUT;
-        OUT_CHECK = ~OUT_CHECK;
+        OUT         <= REG_ADD ;
     end
 
 endmodule

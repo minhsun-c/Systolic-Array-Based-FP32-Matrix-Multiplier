@@ -7,3 +7,4 @@
 `include "src/IntAdderSubtractor.v"
 `include "src/IntMultiplier.v"
 `include "src/ProcessingElement.v"
+`include "src/SystolicArray2.v"

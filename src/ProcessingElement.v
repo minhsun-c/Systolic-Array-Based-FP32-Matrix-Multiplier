@@ -14,8 +14,6 @@ module P_Element(
 // ==============================================================================================
 // Declaration : registers, wires
 // ==============================================================================================
-    reg             OUT_CHECK;      // Decide `OUT` should be replaced or not
-    reg     [2:0]   CUR_STATE;      // Counter will decide whether we should add stall or not
     reg     [31:0]  REG_TOP;        // To store input from top of PE
     reg     [31:0]  REG_LEFT;       // To store input from left of PE
     reg     [31:0]  REG_MUL;        // To store the product of REG_TOP, REG_LEFT
@@ -35,25 +33,7 @@ module P_Element(
         REG_ADD     <= 32'b0;
         PRE_ADD     <= 32'b0;
         OUT         <= 32'b0;
-        CUR_STATE   <= 3'b0;
-        OUT_CHECK   <= 1'b0;
     end
-
-    always @(posedge CLK) begin
-        if (CUR_STATE < 3'd2)begin 
-            CUR_STATE <= CUR_STATE + 1; 
-            OUT_CHECK <= OUT_CHECK; 
-        end
-        else if (CUR_STATE == 3'd2) begin
-            CUR_STATE <= CUR_STATE + 1;
-            OUT_CHECK <= 1'b1; 
-        end
-        else begin
-            CUR_STATE <= CUR_STATE;
-            OUT_CHECK <= ~OUT_CHECK;
-        end
-    end
-
 
 // ==============================================================================================
 // STAGE 1: Store input to REG_TOP, REG_LEFT

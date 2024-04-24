@@ -55,8 +55,8 @@ module P_Element(
         REG_TOP     <= IN_TOP;
         REG_LEFT    <= IN_LEFT;
     end
-    assign OUT_BOTTOM   = IN_TOP;
-    assign OUT_RIGHT    = IN_LEFT;
+    assign OUT_BOTTOM   = REG_TOP;
+    assign OUT_RIGHT    = REG_LEFT;
 
 // ==============================================================================================
 // STAGE 2: REG_TOP * REG_LEFT, result stores in pipeline register (REG_MUL)

@@ -24,23 +24,17 @@ module P_Element(
     wire            RESULT_isZero;
 
 // ==============================================================================================
-// RESET = 0 : reset all the register to 0
-// ==============================================================================================
-    always @(negedge RST_N) begin
-        REG_TOP     <= 32'b0;
-        REG_LEFT    <= 32'b0;
-        REG_MUL     <= 32'b0;
-        REG_ADD     <= 32'b0;
-        PRE_ADD     <= 32'b0;
-        OUT         <= 32'b0;
-    end
-
-// ==============================================================================================
 // STAGE 1: Store input to REG_TOP, REG_LEFT
 // ==============================================================================================
-    always @(posedge CLK) begin
-        REG_TOP     <= IN_TOP;
-        REG_LEFT    <= IN_LEFT;
+    always @(posedge CLK or ~RST_N) begin
+        if (RST_N == 1'b0) begin
+            REG_TOP     <= `FPZero;
+            REG_LEFT    <= `FPZero;
+        end
+        else begin
+            REG_TOP     <= IN_TOP;
+            REG_LEFT    <= IN_LEFT;
+        end
     end
     assign OUT_BOTTOM   = REG_TOP;
     assign OUT_RIGHT    = REG_LEFT;
@@ -51,8 +45,11 @@ module P_Element(
     FP_Multiplier MUL(
         REG_TOP, REG_LEFT, RESULT_MUL
     );
-    always @(posedge CLK) begin 
-        if (~(|REG_TOP) | ~(|REG_LEFT))
+    always @(posedge CLK or ~RST_N) begin 
+        if (RST_N == 1'b0) begin
+            REG_MUL     <= `FPZero;
+        end
+        else if (~(|REG_TOP) | ~(|REG_LEFT))
             REG_MUL     <= `FPZero;
         else
             REG_MUL     <= RESULT_MUL;
@@ -69,9 +66,13 @@ module P_Element(
         .Out(RESULT_ADD),       .isZero(RESULT_isZero),
         .A(REG_MUL),                .B(PRE_ADD)
     );
-    always @(posedge CLK) begin
+    always @(posedge CLK or ~RST_N) begin
+        if (RST_N == 1'b0) begin
+            REG_ADD     <= `FPZero;
+            PRE_ADD     <= `FPZero;
+        end
         // (OUT == 0 && REG_MUL == 0) or (A + B == 0)
-        if ((~(|PRE_ADD) & ~(|REG_MUL )) | RESULT_isZero) begin
+        else if ((~(|PRE_ADD) & ~(|REG_MUL )) | RESULT_isZero) begin
             REG_ADD     <= `FPZero;
             PRE_ADD     <= `FPZero;
         end
@@ -94,8 +95,13 @@ module P_Element(
 // ==============================================================================================
 // STAGE 4: REG_ADD  -> OUT
 // ==============================================================================================
-    always @(posedge CLK) begin
-        OUT         <= REG_ADD ;
+    always @(posedge CLK or ~RST_N) begin
+        if (RST_N == 1'b0) begin
+            OUT         <= `FPZero; 
+        end
+        else begin
+            OUT         <= REG_ADD ;
+        end
     end
 
 endmodule

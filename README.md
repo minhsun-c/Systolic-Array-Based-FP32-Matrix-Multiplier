@@ -1,22 +1,7 @@
-# Systolic Array with Floating Point Arithmetic
+# Systolic Array Based FP32 Matrix Multiplier
 
-## Source Code
-- `FPAdderSubtractor.v`
-- `FPLZDetector.v`
-  - LZDetector48
-- `FPMultiplier.v`
-  - FP_Multiplier 
-- `IntAdderSubtractor.v`
-  - Adder_Subtractor8
-  - CarryLookaheadAdder
-  - FullAdder
-- `IntMultiplier.v`
-  - Int_Multiplier
-  - CarrySaveAdder48
-- `ProcessingElement.v`
+## Description
 
+This project accelerates matrix multiplication in deep learning. The core architecture is Systolic Array, proposed by H. T. Kung. 
 
-## Compile and Execute
-1. Import `include.v` to the testbench verilog file
-2. Compile testbench 
-3. Execute output file
+The multiplier is composed with N*N pipelined processing elements. Inside each processing element, there is a FP32 multiplier and a FP32 Adder. Both FP32 multiplier and adder has a leading zero detector for normalization.

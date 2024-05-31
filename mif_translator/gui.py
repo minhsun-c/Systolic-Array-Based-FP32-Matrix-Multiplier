@@ -8,7 +8,7 @@ class Window:
         self.matrices = [mat1, mat2, matmul, matFPGA]
         self.colorList = [
             'lightblue', 'lightgreen', 
-            'yellow', 'grey'
+            'yellow', 'lightgrey'
         ]
         self.label = [
             'Matrix1', 'Matrix2',

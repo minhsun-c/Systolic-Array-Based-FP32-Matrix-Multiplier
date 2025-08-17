@@ -1,6 +1,3 @@
-`ifndef __FLOATING_POINT_MULTIPLIER
-`define __FLOATING_POINT_MULTIPLIER
-
 module FP_Multiplier(
     input   [31:0]  A,
     input   [31:0]  B,
@@ -52,5 +49,3 @@ module FP_Multiplier(
     assign Mts_shifted = Mts_temp << Shift_amount;
     assign Out[22 : 0] = Mts_shifted[47 : 25];
 endmodule
-
-`endif

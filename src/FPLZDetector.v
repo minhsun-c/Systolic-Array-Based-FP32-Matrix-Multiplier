@@ -1,6 +1,3 @@
-`ifndef __LEADING_ZERO_DETECTOR
-`define __LEADING_ZERO_DETECTOR
-
 module LZDetector48(
     output      [5:0]   s,
     input       [47:0]  q 
@@ -57,5 +54,3 @@ module LZDetector48(
     assign s = s_temp + 6'b1;
 
 endmodule
-
-`endif

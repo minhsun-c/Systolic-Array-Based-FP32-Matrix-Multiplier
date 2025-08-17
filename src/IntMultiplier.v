@@ -1,6 +1,3 @@
-`ifndef __INTEGER_MULTIPLIER
-`define __INTEGER_MULTIPLIER
-
 module Int_Multiplier(
     input [23:0] a, b,
     output [47:0] product
@@ -100,5 +97,3 @@ module CarrySaveAdder48(
     assign Sum = a ^ b ^ c;
     assign Cout = a&b | b&c | a&c;
 endmodule
-
-`endif

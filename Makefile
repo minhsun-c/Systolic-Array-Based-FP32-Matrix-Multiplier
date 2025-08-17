@@ -7,7 +7,7 @@ WAVE	:= build/$(TARGET).vcd
 all: $(OUT)
 
 $(OUT): $(VSRC) $(TB) | build
-	iverilog -o $(OUT) $(TB)
+	iverilog -o $(OUT) $(TB) $(VSRC)
 	vvp $(OUT)
 
 build:

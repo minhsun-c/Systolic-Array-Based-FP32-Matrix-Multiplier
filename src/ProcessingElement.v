@@ -1,6 +1,3 @@
-`ifndef __PROCESSING_ELEMENT
-`define __PROCESSING_ELEMENT
-
 module P_Element(
     output reg  [31:0]  OUT,
     output      [31:0]  OUT_BOTTOM,
@@ -105,5 +102,3 @@ module P_Element(
     end
 
 endmodule
-
-`endif

@@ -1,6 +1,3 @@
-`ifndef __INTEGER_ADDER_SUBTRACTOR
-`define __INTEGER_ADDER_SUBTRACTOR
-
 module Adder_Subtractor8 (
 	output  Cout,
 	output  [7:0] Sum,
@@ -53,10 +50,6 @@ module Adder_Subtractor25 (
 	FullAdder F24(Cout, Sum[24], A[24], B[24] ^ Cin, C24);
 endmodule
 
-`endif
-
-`ifndef __CARRY_LOOKAHEAD_ADDER
-`define __CARRY_LOOKAHEAD_ADDER
 
 module CarryLookaheadAdder #(
     parameter WIDTH = 32
@@ -78,10 +71,6 @@ module CarryLookaheadAdder #(
     assign  Cout = C[WIDTH];
 endmodule
 
-`endif
-
-`ifndef __FULL_ADDER
-`define __FULL_ADDER
 
 module FullAdder (
     output Cout, Sum,
@@ -90,5 +79,3 @@ module FullAdder (
     assign Cout = (A & B) | (A & Cin) | (B & Cin);
     assign Sum  = A ^ B ^ Cin;
 endmodule
-
-`endif

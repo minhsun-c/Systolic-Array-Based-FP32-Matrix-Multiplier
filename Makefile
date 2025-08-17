@@ -1,5 +1,5 @@
 TARGET	:= SYS2
-VSRC	:= $(wildcard src/*.v)
+VSRC	:= $(wildcard src/*.v gen_systolic/*.v)
 TB 		:= test/tb_$(TARGET).v
 OUT		:= build/$(TARGET)
 WAVE	:= build/$(TARGET).vcd

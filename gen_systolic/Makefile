@@ -1,7 +1,7 @@
 SIZE  ?= 2
 WIDTH ?= 32
 
-OUT   := systolic$(SIZE)x$(SIZE).v
+OUT   := SystolicArray$(SIZE)x$(SIZE).v
 BUILD := build
 OBJ   := obj
 BIN   := $(BUILD)/main

@@ -1,1 +1,4 @@
 .DS_Store
+build
+gen_systolic/build 
+gen_systolic/obj

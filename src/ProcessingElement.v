@@ -26,7 +26,7 @@ module P_Element(
 // ==============================================================================================
 // STAGE 1: Store input to REG_TOP, REG_LEFT
 // ==============================================================================================
-    always @(posedge CLK or ~RST_N) begin
+    always @(posedge CLK) begin
         if (RST_N == 1'b0) begin
             REG_TOP     <= `FPZero;
             REG_LEFT    <= `FPZero;
@@ -45,7 +45,7 @@ module P_Element(
     FP_Multiplier MUL(
         REG_TOP, REG_LEFT, RESULT_MUL
     );
-    always @(posedge CLK or ~RST_N) begin 
+    always @(posedge CLK) begin 
         if (RST_N == 1'b0) begin
             REG_MUL     <= `FPZero;
         end
@@ -66,7 +66,7 @@ module P_Element(
         .Out(RESULT_ADD),       .isZero(RESULT_isZero),
         .A(REG_MUL),                .B(PRE_ADD)
     );
-    always @(posedge CLK or ~RST_N) begin
+    always @(posedge CLK) begin
         if (RST_N == 1'b0) begin
             REG_ADD     <= `FPZero;
             PRE_ADD     <= `FPZero;
@@ -95,7 +95,7 @@ module P_Element(
 // ==============================================================================================
 // STAGE 4: REG_ADD  -> OUT
 // ==============================================================================================
-    always @(posedge CLK or ~RST_N) begin
+    always @(posedge CLK) begin
         if (RST_N == 1'b0) begin
             OUT         <= `FPZero; 
         end

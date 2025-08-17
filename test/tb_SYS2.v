@@ -36,9 +36,13 @@ module tb;
 
     initial begin
         clk = 0;
+        rst_n = 0;
+        #2
+        clk = 1;
+        #1
         rst_n = 1;
         #1
-        rst_n = 0;
+        clk = 0;
         #2      
         // Case 3
         W0 = 32'h3FE80000;

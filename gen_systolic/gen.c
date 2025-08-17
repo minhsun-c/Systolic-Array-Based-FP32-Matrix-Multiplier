@@ -31,12 +31,12 @@ static void printModuleInfo(int size, int width)
     NEWLINE();
     printf("\tinput [%d:0]\n\t\t", width - 1);
     for (int i = 0; i < size; i++) {
-        printf(" W%d,", i);
+        printf(" W%d_i,", i);
     }
     NEWLINE();
     printf("\t\t");
     for (int i = 0; i < size; i++) {
-        printf(" N%d,", i);
+        printf(" N%d_i,", i);
     }
     NEWLINE();
     printf("\tinput clk, reset\n");
@@ -64,36 +64,36 @@ static void printInterConnects(int size, int width, int direction)
 
 /*
     P_Element PE_00_00 (
-        .OUT(out0_0),	.OUT_RIGHT(ROW00__00_01),	.OUT_BOTTOM(COL00__00_01),
-        .IN_LEFT(W0),	.IN_TOP(N0),
-        .CLK(clk),	.RST_N(reset)
+        .out(out0_0),	.right_o(ROW00__00_01),	.bottom_o(COL00__00_01),
+        .left_i(W0),	.top_i(N0),
+        .clk(clk),	.rst_n(reset)
     );
 */
 
 static void printPE(int x_index, int y_index)
 {
     printf("\tP_Element PE_%02d_%02d (\n", x_index, y_index);
-    printf("\t\t.OUT(out%d_%d),", x_index, y_index);
+    printf("\t\t.out(out%d_%d),", x_index, y_index);
 
-    // Horizontal Output: OUT_RIGHT
-    printf("\t.OUT_RIGHT(ROW%02d_%02d),", x_index, y_index);
+    // Horizontal Output: right_o
+    printf("\t.right_o(ROW%02d_%02d),", x_index, y_index);
 
-    // Vertical Output: OUT_BOTTOM
-    printf("\t.OUT_BOTTOM(COL%02d_%02d),\n", x_index, y_index);
+    // Vertical Output: bottom_o
+    printf("\t.bottom_o(COL%02d_%02d),\n", x_index, y_index);
 
     // Horizontal Input
     if (y_index == 0)
-        printf("\t\t.IN_LEFT(W%d),", x_index);
+        printf("\t\t.left_i(W%d_i),", x_index);
     else
-        printf("\t\t.IN_LEFT(ROW%02d_%02d),", x_index, y_index - 1);
+        printf("\t\t.left_i(ROW%02d_%02d),", x_index, y_index - 1);
 
     // Vertical Input
     if (x_index == 0)
-        printf("\t.IN_TOP(N%d),\n", y_index);
+        printf("\t.top_i(N%d_i),\n", y_index);
     else
-        printf("\t.IN_TOP(COL%02d_%02d),\n", x_index - 1, y_index);
+        printf("\t.top_i(COL%02d_%02d),\n", x_index - 1, y_index);
 
-    printf("\t\t.CLK(clk),\t.RST_N(reset)\n");
+    printf("\t\t.clk(clk),\t.rst_n(reset)\n");
     printf("\t);\n");
 }
 

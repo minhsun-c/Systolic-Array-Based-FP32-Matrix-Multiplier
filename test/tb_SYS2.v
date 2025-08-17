@@ -12,10 +12,10 @@ module tb;
         .out0_1(out0_1),
         .out1_0(out1_0), 
         .out1_1(out1_1),
-        .W0(W0), 
-        .W1(W1),
-        .N0(N0), 
-        .N1(N1),
+        .W0_i(W0), 
+        .W1_i(W1),
+        .N0_i(N0), 
+        .N1_i(N1),
         .clk(clk), 
         .reset(rst_n)
     );

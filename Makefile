@@ -8,7 +8,7 @@ VSRC    += $(wildcard src/*.v)
 TB_V    := test/tb_$(TARGET).v
 
 # C++ TB (for Verilator) – adjust these to your actual files
-TB_CPP  = tb/helper.cpp tb/testbench.cpp
+TB_CPP  =  tb/testbench.cpp # tb/helper.cpp
 
 VINC		:= -Iinclude
 CINC		:= -Itb
@@ -18,6 +18,10 @@ WAVE    := $(OUT_DIR)/wave.vcd
 
 # Choose simulator: iverilog or verilator
 SIM ?= verilator
+
+# Set input data
+IN_DIR	:= data
+INPUT 	?= test2.txt
 
 # === Default ===
 all: mm
@@ -35,10 +39,10 @@ mm: build_systolic indent $(VSRC) $(TB_V) | $(OUT_DIR)
 else ifeq ($(SIM),verilator)
 mm: obj_dir/V${TARGET}.mk | $(OUT_DIR)
 
-obj_dir/V${TARGET}.mk: build_systolic ${VSRC} ${TB_CPP} $(PROG_BIN)
+obj_dir/V${TARGET}.mk: build_systolic build_dut ${VSRC} ${TB_CPP} $(PROG_BIN)
 	verilator --top-module $(TARGET) --cc $(VSRC) $(VINC) \
 	  --exe $(TB_CPP) --trace \
-	  -CFLAGS "-std=c++17 $(CINC)" \
+	  -CFLAGS "-std=c++17 $(CINC) -DNN=$(SIZE)" \
 	  --build -Wno-fatal
 
 obj_dir/V${TARGET}.exe: obj_dir/V${TARGET}.mk
@@ -46,7 +50,7 @@ obj_dir/V${TARGET}.exe: obj_dir/V${TARGET}.mk
 
 .PHONY: run
 run: obj_dir/V${TARGET}.exe indent
-	./obj_dir/V$(TARGET) -N $(SIZE)
+	./obj_dir/V$(TARGET) -F $(IN_DIR)/$(INPUT)
 	@if [ -f wave.vcd ]; then mkdir -p $(OUT_DIR); mv -f wave.vcd $(WAVE); fi
 
 endif
@@ -56,6 +60,10 @@ endif
 build_systolic:
 	make -C gen_systolic SIZE=$(SIZE)
 	cp gen_systolic/$(TARGET)$(SIZE)x$(SIZE).v $(TARGET).v
+
+.PHONY: build_dut
+build_dut:
+	python3 scripts/gen_dut_bind.py -N $(SIZE) --top SystolicArray --out tb/dut_bind.h
 
 $(OUT_DIR):
 	mkdir -p $(OUT_DIR)
@@ -72,4 +80,4 @@ indent:
 
 .PHONY: clean
 clean:
-	rm -rf $(OUT_DIR) obj_dir *.vcd $(TARGET).v
+	rm -rf $(OUT_DIR) obj_dir *.vcd $(TARGET).v tb/dut_bind.h gen_systolic/*.v

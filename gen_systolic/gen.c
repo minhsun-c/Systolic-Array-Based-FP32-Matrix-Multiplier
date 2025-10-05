@@ -20,26 +20,23 @@ void printModule(int size, int width)
 
 static void printModuleInfo(int size, int width)
 {
-    printf("module Systolic_Array%dx%d (\n", size, size);
-    printf("\toutput [%d:0]", width - 1);
+    printf("module SystolicArray (\n");
     for (int i = 0; i < size; i++) {
-        NEWLINE();
-        printf("\t\t");
-        for (int j = 0; j < size; j++)
-            printf(" out%d_%d,", i, j);
+        for (int j = 0; j < size; j++) {
+            printf("\toutput [%d:0]", width - 1);
+            printf(" out%d_%d,\n", i, j);
+        }
     }
-    NEWLINE();
-    printf("\tinput [%d:0]\n\t\t", width - 1);
     for (int i = 0; i < size; i++) {
-        printf(" W%d_i,", i);
+        printf("\tinput [%d:0]\t", width - 1);
+        printf(" W%d_i,\n", i);
     }
-    NEWLINE();
-    printf("\t\t");
     for (int i = 0; i < size; i++) {
-        printf(" N%d_i,", i);
+        printf("\tinput [%d:0]\t", width - 1);
+        printf(" N%d_i,\n", i);
     }
-    NEWLINE();
-    printf("\tinput clk, reset\n");
+    printf("\tinput clk,\n");
+    printf("\tinput reset\n");
     printf(");\n");
     NEWLINE();
 }

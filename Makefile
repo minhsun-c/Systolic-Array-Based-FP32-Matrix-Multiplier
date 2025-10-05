@@ -1,20 +1,75 @@
-TARGET	:= SYS2
-VSRC	:= $(wildcard src/*.v gen_systolic/*.v)
-TB 		:= test/tb_$(TARGET).v
-OUT		:= build/$(TARGET)
-WAVE	:= build/$(TARGET).vcd
+# === Configuration ===
+SIZE    ?= 2
+TARGET  := SystolicArray
+VSRC    := $(TARGET).v
+VSRC    += $(wildcard src/*.v)
 
-all: $(OUT)
+# Verilog TB (for Icarus)
+TB_V    := test/tb_$(TARGET).v
 
-$(OUT): $(VSRC) $(TB) | build
-	iverilog -o $(OUT) $(TB) $(VSRC)
+# C++ TB (for Verilator) – adjust these to your actual files
+TB_CPP  = tb/helper.cpp tb/testbench.cpp
+
+VINC		:= -Iinclude
+CINC		:= -Itb
+OUT_DIR := build
+OUT     := $(OUT_DIR)/$(TARGET)
+WAVE    := $(OUT_DIR)/$(TARGET).vcd
+
+# Choose simulator: iverilog or verilator
+SIM ?= iverilog
+
+# === Default ===
+all: mm
+
+# === Simulator rules ===
+ifeq ($(SIM),iverilog)
+mm: build_systolic indent $(VSRC) $(TB_V) | $(OUT_DIR)
+	@echo "[iverilog] Building..."
+	# add -g2012 if you use SystemVerilog features
+	iverilog -g2012 $(INC) -o $(OUT) $(TB_V) $(VSRC)
 	vvp $(OUT)
+	# If TB writes wave to a fixed name, normalize:
+	@if [ -f wave.vcd ]; then mkdir -p $(OUT_DIR); mv -f wave.vcd $(WAVE); fi
 
-build:
-	mkdir build
+else ifeq ($(SIM),verilator)
+mm: obj_dir/V${TARGET}.mk | $(OUT_DIR)
 
-wave: $(OUT) $(WAVE)
+obj_dir/V${TARGET}.mk: build_systolic ${VSRC} ${TB_CPP} $(PROG_BIN)
+	verilator --top-module $(TARGET) --cc $(VSRC) $(VINC) \
+	  --exe $(TB_CPP) --trace \
+	  -CFLAGS "-std=c++17 $(CINC)" \
+	  --build -Wno-fatal
+
+obj_dir/V${TARGET}.exe: obj_dir/V${TARGET}.mk
+	make -C obj_dir -f V$(TARGET).mk
+
+.PHONY: run
+run: indent obj_dir/V${TARGET}.exe
+	./obj_dir/V$(TARGET)
+	@if [ -f wave.vcd ]; then mkdir -p $(OUT_DIR); mv -f wave.vcd $(WAVE); fi
+
+endif
+
+# === Utility rules ===
+.PHONY: build_systolic
+build_systolic:
+	make -C gen_systolic SIZE=$(SIZE)
+	cp gen_systolic/$(TARGET)$(SIZE)x$(SIZE).v $(TARGET).v
+
+$(OUT_DIR):
+	mkdir -p $(OUT_DIR)
+
+.PHONY: wave
+wave: $(OUT)
+	@echo "Opening GTKWave..."
 	gtkwave $(WAVE)
 
+.PHONY: indent
+indent:
+	clang-format -i tb/*
+	verible-verilog-format --flagfile .verible-format.flags $(VSRC)
+
+.PHONY: clean
 clean:
-	rm -rf build
+	rm -rf $(OUT_DIR) obj_dir *.vcd $(TARGET).v

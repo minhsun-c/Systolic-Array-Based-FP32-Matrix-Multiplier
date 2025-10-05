@@ -17,7 +17,7 @@ OUT     := $(OUT_DIR)/$(TARGET)
 WAVE    := $(OUT_DIR)/$(TARGET).vcd
 
 # Choose simulator: iverilog or verilator
-SIM ?= iverilog
+SIM ?= verilator
 
 # === Default ===
 all: mm
@@ -45,8 +45,8 @@ obj_dir/V${TARGET}.exe: obj_dir/V${TARGET}.mk
 	make -C obj_dir -f V$(TARGET).mk
 
 .PHONY: run
-run: indent obj_dir/V${TARGET}.exe
-	./obj_dir/V$(TARGET)
+run: obj_dir/V${TARGET}.exe indent
+	./obj_dir/V$(TARGET) -N $(SIZE)
 	@if [ -f wave.vcd ]; then mkdir -p $(OUT_DIR); mv -f wave.vcd $(WAVE); fi
 
 endif

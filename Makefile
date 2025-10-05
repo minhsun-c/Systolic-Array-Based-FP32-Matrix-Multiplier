@@ -14,7 +14,7 @@ VINC		:= -Iinclude
 CINC		:= -Itb
 OUT_DIR := build
 OUT     := $(OUT_DIR)/$(TARGET)
-WAVE    := $(OUT_DIR)/$(TARGET).vcd
+WAVE    := $(OUT_DIR)/wave.vcd
 
 # Choose simulator: iverilog or verilator
 SIM ?= verilator

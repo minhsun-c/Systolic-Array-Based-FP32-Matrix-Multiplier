@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     auto *top = new VSystolicArray;
     auto *tfp = new VerilatedVcdC;
     top->trace(tfp, 0);
-    tfp->open("build/SYS2.vcd");
+    tfp->open("build/wave.vcd");
 
     // Active-low reset
     top->reset = 0;
